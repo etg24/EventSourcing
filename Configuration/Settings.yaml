@@ -1,0 +1,22 @@
+Etg24:
+  EventSourcing:
+    Store:
+      Backend:
+        EventStoreBackend:
+          url: 'http://127.0.0.1:2113'
+
+    Queue:
+      BeanstalkQueue:
+        host: '127.0.0.1'
+        port: '%Pheanstalk\PheanstalkInterface::DEFAULT_PORT%'
+        tube: 'etg24_eventsourcing_eventbus_queue'
+        timeout: NULL
+
+    Command:
+      Controller:
+        # When enabled, all commands will be available through the CLI
+        enabled: true
+
+        # when set to true, commands will be available through CLI
+        # but not shown on ./flow help
+        markAsInternal: false

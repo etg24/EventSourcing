@@ -1,0 +1,8 @@
+'Pheanstalk\Pheanstalk':
+  arguments:
+    1:
+      setting: 'Etg24.EventSourcing.Queue.BeanstalkQueue.host'
+    2:
+      setting: 'Etg24.EventSourcing.Queue.BeanstalkQueue.port'
+    3:
+      setting: 'Etg24.EventSourcing.Queue.BeanstalkQueue.timeout'

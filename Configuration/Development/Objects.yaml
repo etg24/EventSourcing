@@ -1,0 +1,2 @@
+Etg24\EventSourcing\Queue\QueueInterface:
+  className: 'Etg24\EventSourcing\Queue\ImmediateQueue'
