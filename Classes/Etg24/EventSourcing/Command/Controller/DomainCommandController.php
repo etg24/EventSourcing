@@ -60,8 +60,17 @@ class DomainCommandController extends CommandController {
 
 	public function execute() {
 		$class = new ReflectionClass($this->request->getCommand()->getControllerCommandName());
-		$command = $class->newInstanceArgs(func_get_args());
 
+		// convert "NULL" to NULL
+		$arguments = array_map(function($argument) {
+			if ($argument === 'NULL') {
+				return NULL;
+			}
+
+			return $argument;
+		}, func_get_args());
+
+		$command = $class->newInstanceArgs($arguments);
 		$this->commandBus->handle($command);
 	}
 
