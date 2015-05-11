@@ -3,10 +3,11 @@ namespace Etg24\EventSourcing\Command\Controller\Aspect;
 
 use Etg24\EventSourcing\Command as Domain;
 use Etg24\EventSourcing\Command\Controller\DomainCommand;
-use Etg24\EventSourcing\Command\Controller\DomainModelCommandController;
+use Etg24\EventSourcing\Command\Controller\DomainCommandController;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Cli as Cli;
+use TYPO3\Flow\Cli\Request;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 
@@ -65,7 +66,7 @@ class RegisteringDomainCommandsAspect {
 	 */
 	protected function buildDomainCommand($commandClassName) {
 		return new DomainCommand(
-			DomainModelCommandController::class,
+			DomainCommandController::class,
 			$commandClassName
 		);
 	}
@@ -73,17 +74,22 @@ class RegisteringDomainCommandsAspect {
 	/**
 	 * @param JoinPointInterface $joinPoint
 	 * @return mixed Result of the target method
-	 * @Flow\Around("class(TYPO3\Flow\Cli\Command) && method(.*->__construct())")
+	 * @Flow\Around("class(TYPO3\Flow\Cli\Request) && method(.*->getCommand())")
 	 */
 	public function replaceCommandWithDomainCommand(JoinPointInterface $joinPoint) {
-		try {
-			return $joinPoint->getAdviceChain()->proceed($joinPoint);
-		} catch (\InvalidArgumentException $e) {
-			$controllerClassName = $joinPoint->getMethodArgument('controllerClassName');
-			$controllerCommandName = $joinPoint->getMethodArgument('controllerCommandName');
+		/** @var Request $proxy */
+		$proxy = $joinPoint->getProxy();
 
-			return new DomainCommand($controllerClassName, $controllerCommandName);
+		if ($proxy->getControllerObjectName() === DomainCommandController::class) {
+			ObjectAccess::setProperty(
+				$proxy,
+				'command',
+				$this->buildDomainCommand($proxy->getControllerCommandName()),
+				TRUE
+			);
 		}
+
+		return $joinPoint->getAdviceChain()->proceed($joinPoint);
 	}
 
 }

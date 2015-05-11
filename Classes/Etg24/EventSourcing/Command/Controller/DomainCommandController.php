@@ -11,12 +11,7 @@ use TYPO3\Flow\Mvc\Exception\InvalidArgumentTypeException;
 /**
  * @Flow\Scope("singleton")
  */
-class DomainModelCommandController extends CommandController {
-
-	/**
-	 * @var DomainCommand
-	 */
-	protected $cliCommand;
+class DomainCommandController extends CommandController {
 
 	/**
 	 * @var InternalCommandBus
@@ -25,11 +20,6 @@ class DomainModelCommandController extends CommandController {
 	protected $commandBus;
 
 	protected function resolveCommandMethodName() {
-		$this->cliCommand = new DomainCommand(
-			$this->request->getControllerObjectName(),
-			$this->request->getControllerCommandName()
-		);
-
 		return 'execute';
 	}
 
@@ -39,7 +29,9 @@ class DomainModelCommandController extends CommandController {
 	 */
 	protected function initializeCommandMethodArguments() {
 		$this->arguments->removeAll();
-		$commandArguments = $this->cliCommand->getArgumentDefinitions();
+
+		/** @var DomainCommandArgumentDefinition[] $commandArguments */
+		$commandArguments = $this->request->getCommand()->getArgumentDefinitions();
 
 		foreach ($commandArguments as $commandArgument) {
 			$this->arguments->addNewArgument(
@@ -67,7 +59,7 @@ class DomainModelCommandController extends CommandController {
 	}
 
 	public function execute() {
-		$class = new ReflectionClass($this->cliCommand->getControllerCommandName());
+		$class = new ReflectionClass($this->request->getCommand()->getControllerCommandName());
 		$command = $class->newInstanceArgs(func_get_args());
 
 		$this->commandBus->handle($command);
