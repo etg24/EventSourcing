@@ -88,7 +88,12 @@ class ProjectionCommandController extends CommandController {
 	public function replayAllProjectionsCommand() {
 		$projectorClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(ProjectorInterface::class);
 		// todo: find a better way of doing this
-		$stream = $this->store->load('events');
+
+		try {
+			$stream = $this->store->load('events');
+		} catch (EventStreamNotFoundException $e) {
+			$stream = [];
+		}
 
 		foreach ($projectorClassNames as $projectorClassName) {
 			$projector = $this->getProjectorByName($projectorClassName);
