@@ -33,7 +33,7 @@ class ArraySerializer implements MessageSerializerInterface {
 			throw new \InvalidArgumentException('The ArraySerializer can only unserialize arrays.', 1427369045);
 		}
 
-		if (array_key_exists('eventType', $serializedMessage) === FALSE || array_key_exists('payload', $serializedMessage) === FALSE || is_array($serializedMessage['payload']) === FALSE) {
+		if (array_key_exists('messageType', $serializedMessage) === FALSE || array_key_exists('payload', $serializedMessage) === FALSE || is_array($serializedMessage['payload']) === FALSE) {
 			throw new \InvalidArgumentException('The serialized message is corrupted.', 1427369459);
 		}
 
