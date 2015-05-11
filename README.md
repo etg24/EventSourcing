@@ -3,7 +3,7 @@ Etg24.EventSourcing
 
 This package provides basic CQRS/ES infrastructure for [TYPO3 Flow](http://flow.typo3.org).
 
-It's purpose is to provide inspiration for writing your own customized set of tools for working with CQRS/ES. *I do not recommend using this package without understanding the underlaying concepts first.*
+Its purpose is to provide inspiration for writing your own customized set of tools for working with CQRS/ES. *I do not recommend using this package without understanding the underlaying concepts first.*
 
 ## Installation
 This package is not yet on packagist, so for now just clone it. Soon it will be available through composer directly ;)
