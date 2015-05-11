@@ -28,4 +28,12 @@ interface ProjectorInterface extends EventHandlerInterface {
 	 */
 	public function countAll();
 
+	/**
+	 * Deletes the projection for the given identifier (if available)
+	 *
+	 * @param string $identifier
+	 * @return void
+	 */
+	public function deleteById($identifier);
+
 }
