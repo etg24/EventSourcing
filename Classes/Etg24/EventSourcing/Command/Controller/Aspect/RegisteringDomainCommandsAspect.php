@@ -70,4 +70,20 @@ class RegisteringDomainCommandsAspect {
 		);
 	}
 
+	/**
+	 * @param JoinPointInterface $joinPoint
+	 * @return mixed Result of the target method
+	 * @Flow\Around("class(TYPO3\Flow\Cli\Command) && method(.*->__construct())")
+	 */
+	public function replaceCommandWithDomainCommand(JoinPointInterface $joinPoint) {
+		try {
+			return $joinPoint->getAdviceChain()->proceed($joinPoint);
+		} catch (\InvalidArgumentException $e) {
+			$controllerClassName = $joinPoint->getMethodArgument('controllerClassName');
+			$controllerCommandName = $joinPoint->getMethodArgument('controllerCommandName');
+
+			return new DomainCommand($controllerClassName, $controllerCommandName);
+		}
+	}
+
 }
