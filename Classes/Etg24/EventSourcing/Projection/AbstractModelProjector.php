@@ -1,6 +1,7 @@
 <?php
 namespace Etg24\EventSourcing\Projection;
 
+use Etg24\EventSourcing\Event\DomainEvent;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Persistence\QueryInterface;
@@ -15,6 +16,15 @@ abstract class AbstractModelProjector extends AbstractProjector {
 	 * @Flow\Inject
 	 */
 	protected $persistenceManager;
+
+	/**
+	 * @param DomainEvent $event
+	 * @throws \Etg24\EventSourcing\Event\Handler\Exception\UnableToHandleEventException
+	 */
+	public function handle(DomainEvent $event) {
+		parent::handle($event);
+		$this->persistenceManager->persistAll();
+	}
 
 	/**
 	 * Clears and rebuilds the projection persistence structure
@@ -63,6 +73,7 @@ abstract class AbstractModelProjector extends AbstractProjector {
 		// todo: check if we want to throw an exception here
 		if ($object !== NULL) {
 			$this->persistenceManager->remove($object);
+			$this->persistenceManager->persistAll();
 		}
 	}
 
