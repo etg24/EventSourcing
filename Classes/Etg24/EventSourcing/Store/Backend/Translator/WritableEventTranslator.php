@@ -26,7 +26,7 @@ class WritableEventTranslator {
 	public function toWritableEvent(DomainEvent $event) {
 		$serializedEvent = $this->arraySerializer->serialize($event);
 
-		$eventType = $serializedEvent['eventType'];
+		$eventType = $serializedEvent['messageType'];
 		$data = $serializedEvent['payload'];
 
 		unset($data['aggregateId']);
@@ -45,7 +45,7 @@ class WritableEventTranslator {
 		$data = $event->getData();
 
 		return $this->arraySerializer->unserialize([
-			'eventType' => $eventType,
+			'messageType' => $eventType,
 			'payload' => $data
 		]);
 	}
