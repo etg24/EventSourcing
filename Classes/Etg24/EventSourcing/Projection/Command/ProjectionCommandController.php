@@ -1,6 +1,7 @@
 <?php
 namespace Etg24\EventSourcing\Projection\Command;
 
+use Etg24\EventSourcing\Projection\AbstractProjector;
 use Etg24\EventSourcing\Projection\ProjectionBuilder;
 use Etg24\EventSourcing\Projection\ProjectorInterface;
 use Etg24\EventSourcing\Store\Backend\EventStoreBackend;
@@ -81,7 +82,9 @@ class ProjectionCommandController extends CommandController {
 
 		$projector->build();
 		foreach ($stream as $event) {
-			$projector->handle($event);
+			if ($projector->canHandleEvent($event)) {
+				$projector->handle($event);
+			}
 		}
 	}
 
@@ -95,11 +98,21 @@ class ProjectionCommandController extends CommandController {
 			$stream = [];
 		}
 
+		/** @var AbstractProjector[] $projectors */
+		$projectors = [];
 		foreach ($projectorClassNames as $projectorClassName) {
 			$projector = $this->getProjectorByName($projectorClassName);
-			$projector->build();
 
-			foreach ($stream as $event) {
+			try {
+				$projector->build();
+				$projectors[] = $projector;
+			} catch (\Exception $e) {
+				$this->outputLine('Unable to build projection table for projector "' . $projectorClassName . '": ' . $e->getMessage());
+			}
+		}
+
+		foreach ($stream as $event) {
+			foreach ($projectors as $projector) {
 				if ($projector->canHandleEvent($event)) {
 					$projector->handle($event);
 				}
