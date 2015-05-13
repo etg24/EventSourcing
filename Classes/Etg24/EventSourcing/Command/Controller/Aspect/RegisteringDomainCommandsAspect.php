@@ -54,6 +54,10 @@ class RegisteringDomainCommandsAspect {
 		$domainCommandClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(Domain\CommandInterface::class);
 
 		foreach ($domainCommandClassNames as $domainCommandClassName) {
+			if ($this->reflectionService->isClassAbstract($domainCommandClassName) === TRUE) {
+				continue;
+			}
+
 			$cliCommands[] = $this->buildDomainCommand($domainCommandClassName);
 		}
 
