@@ -8,7 +8,7 @@ Its purpose is to provide inspiration for writing your own customized set of too
 ## Installation
 
 ```
-$ composer require etg24/eventsourcing ~0.9.0
+$ composer require etg24/eventsourcing dev-master
 ```
 
 ## Commands<a name="commands"></a>

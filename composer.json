@@ -5,11 +5,11 @@
     "version": "0.9.0",
     "license": ["MIT"],
     "authors": [
-      {
-        "name": "Akii",
-        "email": "zedd@akii.de",
-        "role": "Developer"
-      }
+        {
+          "name": "Akii",
+          "email": "zedd@akii.de",
+          "role": "Developer"
+        }
     ],
     "require": {
         "typo3/flow": "dev-master",
