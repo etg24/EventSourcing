@@ -14,7 +14,7 @@
     "require": {
         "typo3/flow": "dev-master",
         "dbellettini/eventstore-client": "~0.4",
-        "pda/pheanstalk": "*"
+        "pda/pheanstalk": "3.0.*"
     },
     "autoload": {
         "psr-0": {
