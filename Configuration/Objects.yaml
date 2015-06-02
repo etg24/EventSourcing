@@ -1,3 +1,18 @@
+Etg24\EventSourcing\Auditing\LoggerInterface:
+  scope: singleton
+  factoryObjectName: TYPO3\Flow\Log\LoggerFactory
+  factoryMethodName: create
+  arguments:
+    1:
+      value: 'Etg24.EventSourcing.Auditing'
+    2:
+      value: 'TYPO3\Flow\Log\Logger'
+    3:
+      value:
+        fileBackend: 'TYPO3\Flow\Log\Backend\FileBackend'
+    4:
+      setting: Etg24.EventSourcing.Auditing.Log.BackendOptions
+
 'Pheanstalk\Pheanstalk':
   arguments:
     1:

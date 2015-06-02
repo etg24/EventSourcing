@@ -3,6 +3,7 @@ namespace Etg24\EventSourcing\Command\Bus;
 
 use Etg24\EventSourcing\Command\Command;
 use Etg24\EventSourcing\Command\Bus\Exception\UnableToHandleCommandException;
+use Etg24\EventSourcing\Command\Handler\CommandHandler;
 use Etg24\EventSourcing\Command\Handler\CommandHandlerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Annotations as Flow;
@@ -41,10 +42,17 @@ class InternalCommandBus {
 		$commandHandled = FALSE;
 
 		foreach ($this->commandHandlers as $commandHandler) {
+			/** @var CommandHandler $commandHandler */
 			if ($commandHandler->canHandleCommand($command)) {
-				$commandHandler->handle($command);
-				$commandHandled = TRUE;
-				break;
+				try {
+					$commandHandler->handle($command);
+					$commandHandled = TRUE;
+					$this->emitCommandHandlingSuccess($command, $commandHandler);
+					break;
+				} catch (\Exception $exception) {
+					$this->emitCommandHandlingFailure($command, $commandHandler, $exception);
+					throw $exception;
+				}
 			}
 		}
 
@@ -52,6 +60,23 @@ class InternalCommandBus {
 			throw new UnableToHandleCommandException('The command "' . get_class($command) . '" could not be handled by the command bus.', 1428327683);
 		}
 	}
+
+	/**
+	 * @param Command $command
+	 * @param CommandHandler $commandHandler
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitCommandHandlingSuccess(Command $command, CommandHandler $commandHandler) {}
+
+	/**
+	 * @param Command $command
+	 * @param CommandHandler $commandHandler
+	 * @param \Exception $exception
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitCommandHandlingFailure(Command $command, CommandHandler $commandHandler, \Exception $exception) {}
 
 	/**
 	 * @param ObjectManagerInterface $objectManager
