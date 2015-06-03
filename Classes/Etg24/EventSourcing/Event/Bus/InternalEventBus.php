@@ -70,8 +70,9 @@ class InternalEventBus implements BusInterface {
 	protected function handleEvent(DomainEvent $event, EventHandlerInterface $eventHandler) {
 		try {
 			$eventHandler->handle($event);
-		} catch (\Exception $e) {
-			// todo: log to event error log
+			$this->emitEventHandlingSuccess($event, $eventHandler);
+		} catch (\Exception $exception) {
+			$this->emitEventHandlingFailure($event, $eventHandler, $exception);
 		}
 	}
 
@@ -84,6 +85,7 @@ class InternalEventBus implements BusInterface {
 		$recipient = get_class($eventHandler);
 
 		$this->queue->queue(new Message($recipient, $serializedEvent));
+		$this->emitEventQueueingSuccess($event, $eventHandler);
 	}
 
 	/**
@@ -96,4 +98,28 @@ class InternalEventBus implements BusInterface {
 		return $reflectionService->getAllImplementationClassNamesForInterface(EventHandlerInterface::class);
 	}
 
+	/**
+	 * @param DomainEvent $event
+	 * @param EventHandlerInterface $eventHandler
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitEventHandlingSuccess(DomainEvent $event, EventHandlerInterface $eventHandler) {}
+
+	/**
+	 * @param DomainEvent $event
+	 * @param EventHandlerInterface $eventHandler
+	 * @param \Exception $exception
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitEventHandlingFailure(DomainEvent $event, EventHandlerInterface $eventHandler, \Exception $exception) {}
+
+	/**
+	 * @param DomainEvent $event
+	 * @param EventHandlerInterface $eventHandler
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitEventQueueingSuccess(DomainEvent $event, EventHandlerInterface $eventHandler) {}
 }

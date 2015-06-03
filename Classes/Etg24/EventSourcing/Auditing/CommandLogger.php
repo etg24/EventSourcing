@@ -33,11 +33,12 @@ class CommandLogger {
 		$commandHandlerType = new ObjectName($commandHandler);
 		$additionalData = [
 			'status' => 'success',
+			'type' => 'command',
 			'handlerType' => $commandHandlerType->getName(),
 			'command' => $this->getCommandData($command)
 		];
 
-		$this->logger->log(sprintf('%s success', $command), LOG_INFO, $additionalData, 'EventSourcing');
+		$this->logger->log(sprintf('%s handling success', $command), LOG_INFO, $additionalData, 'ES.Command');
 	}
 
 	/**
@@ -50,6 +51,7 @@ class CommandLogger {
 		$commandHandlerType = new ObjectName($commandHandler);
 		$additionalData = [
 			'status' => 'failure',
+			'type' => 'command',
 			'handlerType' => $commandHandlerType->getName(),
 			'command' => $this->getCommandData($command),
 			'exception' => [
@@ -61,7 +63,7 @@ class CommandLogger {
 			]
 		];
 
-		$this->logger->log(sprintf('%s failure', $command), LOG_ERR, $additionalData, 'EventSourcing');
+		$this->logger->log(sprintf('%s handling failure', $command), LOG_ERR, $additionalData, 'ES.Command');
 	}
 
 	/**
