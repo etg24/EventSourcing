@@ -30,10 +30,10 @@ class CommandLogger {
 	 * @return void
 	 */
 	public function onCommandHandlingSuccess(Command $command, CommandHandlerInterface $commandHandler) {
-		$commandHandlerName = new ObjectName($commandHandler);
+		$commandHandlerType = new ObjectName($commandHandler);
 		$additionalData = [
 			'status' => 'success',
-			'handler' => $commandHandlerName->getName(),
+			'handlerType' => $commandHandlerType->getName(),
 			'command' => $this->getCommandData($command)
 		];
 
@@ -47,9 +47,10 @@ class CommandLogger {
 	 * @return void
 	 */
 	public function onCommandHandlingFailure(Command $command, CommandHandlerInterface $commandHandler, \Exception $exception) {
+		$commandHandlerType = new ObjectName($commandHandler);
 		$additionalData = [
 			'status' => 'failure',
-			'handler' => get_class($commandHandler),
+			'handlerType' => $commandHandlerType->getName(),
 			'command' => $this->getCommandData($command),
 			'exception' => [
 				'message' => $exception->getMessage(),
