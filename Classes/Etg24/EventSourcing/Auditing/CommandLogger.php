@@ -3,6 +3,8 @@ namespace Etg24\EventSourcing\Auditing;
 
 use Etg24\EventSourcing\Command\Command;
 use Etg24\EventSourcing\Command\Handler\CommandHandler;
+use Etg24\EventSourcing\Domain\Model\ObjectName;
+use Etg24\EventSourcing\Serializer\ArraySerializer;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -18,7 +20,7 @@ class CommandLogger {
 
 	/**
 	 * @Flow\Inject
-	 * @var CommandSerializerInterface
+	 * @var ArraySerializer
 	 */
 	protected $commandSerializer;
 
@@ -28,11 +30,12 @@ class CommandLogger {
 	 * @return void
 	 */
 	public function onCommandHandlingSuccess(Command $command, CommandHandler $commandHandler) {
-		$additionalData = array(
+		$commandHandlerName = new ObjectName($commandHandler);
+		$additionalData = [
 			'status' => 'success',
-			'handler' => get_class($commandHandler),
+			'handler' => $commandHandlerName->getName(),
 			'command' => $this->getCommandData($command)
-		);
+		];
 
 		$this->logger->log(sprintf('%s success', $command), LOG_INFO, $additionalData, 'EventSourcing');
 	}
@@ -44,18 +47,18 @@ class CommandLogger {
 	 * @return void
 	 */
 	public function onCommandHandlingFailure(Command $command, CommandHandler $commandHandler, \Exception $exception) {
-		$additionalData = array(
+		$additionalData = [
 			'status' => 'failure',
 			'handler' => get_class($commandHandler),
 			'command' => $this->getCommandData($command),
-			'exception' => array(
+			'exception' => [
 				'message' => $exception->getMessage(),
 				'file' => $exception->getFile(),
 				'class' => get_class($exception),
 				'line' => $exception->getLine(),
 				'code' => $exception->getCode()
-			)
-		);
+			]
+		];
 
 		$this->logger->log(sprintf('%s failure', $command), LOG_ERR, $additionalData, 'EventSourcing');
 	}
@@ -65,10 +68,7 @@ class CommandLogger {
 	 * @return array
 	 */
 	protected function getCommandData(Command $command) {
-		return array(
-			'class' => get_class($command),
-			'data' => $this->commandSerializer->serialize($command),
-		);
+		return $this->commandSerializer->serialize($command);
 	}
 
 }
