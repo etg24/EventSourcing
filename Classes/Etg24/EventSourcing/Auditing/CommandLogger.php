@@ -13,14 +13,14 @@ use TYPO3\Flow\Annotations as Flow;
 class CommandLogger {
 
 	/**
-	 * @Flow\Inject
 	 * @var LoggerInterface
+	 * @Flow\Inject
 	 */
 	protected $logger;
 
 	/**
-	 * @Flow\Inject
 	 * @var ArraySerializer
+	 * @Flow\Inject
 	 */
 	protected $commandSerializer;
 
