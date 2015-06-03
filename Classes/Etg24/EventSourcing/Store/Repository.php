@@ -2,6 +2,7 @@
 namespace Etg24\EventSourcing\Store;
 
 use Etg24\EventSourcing\AggregateRootInterface;
+use Etg24\EventSourcing\Domain\Model\ObjectName;
 use Etg24\EventSourcing\Event\Bus\BusInterface;
 use Etg24\EventSourcing\Store\Backend\Exception\EventStreamNotFoundException;
 use Etg24\EventSourcing\Store\Backend\Exception\OptimisticLockException;
@@ -31,13 +32,13 @@ abstract class Repository {
 	protected $aggregateClassName;
 
 	/**
-	 * @var string
+	 * @var ObjectName
 	 */
 	protected $streamName;
 
 	public function __construct() {
 		$this->aggregateClassName = preg_replace(array('/\\\Repository\\\/', '/Repository$/'), array('\\Model\\', ''), get_class($this));
-		$this->streamName = str_replace('\\', '.', $this->aggregateClassName);
+		$this->streamName = new ObjectName($this->aggregateClassName);
 	}
 
 	/**
@@ -87,7 +88,7 @@ abstract class Repository {
 	 * @return string
 	 */
 	protected function getStreamForIdentifier($identifier) {
-		return $this->streamName . '-' . $identifier;
+		return sprintf('%s-%s', $this->streamName, $identifier);
 	}
 
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Etg24\EventSourcing\Serializer;
 
+use Etg24\EventSourcing\Domain\Model\ObjectName;
 use Etg24\EventSourcing\Message;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Annotations as Flow;
@@ -15,11 +16,11 @@ class ArraySerializer implements MessageSerializerInterface {
 	 * @return array
 	 */
 	public function serialize(Message $message) {
-		$type = str_replace('\\', '.', get_class($message));
+		$messageType = new ObjectName($message);
 		$data = ObjectAccess::getGettableProperties($message);
 
 		return [
-			'messageType' => $type,
+			'messageType' => $messageType->getName(),
 			'payload' => $data
 		];
 	}
