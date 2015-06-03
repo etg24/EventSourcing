@@ -2,7 +2,7 @@
 namespace Etg24\EventSourcing\Auditing;
 
 use Etg24\EventSourcing\Command\Command;
-use Etg24\EventSourcing\Command\Handler\CommandHandler;
+use Etg24\EventSourcing\Command\Handler\CommandHandlerInterface;
 use Etg24\EventSourcing\Domain\Model\ObjectName;
 use Etg24\EventSourcing\Serializer\ArraySerializer;
 use TYPO3\Flow\Annotations as Flow;
@@ -26,10 +26,10 @@ class CommandLogger {
 
 	/**
 	 * @param Command $command
-	 * @param CommandHandler $commandHandler
+	 * @param CommandHandlerInterface $commandHandler
 	 * @return void
 	 */
-	public function onCommandHandlingSuccess(Command $command, CommandHandler $commandHandler) {
+	public function onCommandHandlingSuccess(Command $command, CommandHandlerInterface $commandHandler) {
 		$commandHandlerName = new ObjectName($commandHandler);
 		$additionalData = [
 			'status' => 'success',
@@ -42,11 +42,11 @@ class CommandLogger {
 
 	/**
 	 * @param Command $command
-	 * @param CommandHandler $commandHandler
+	 * @param CommandHandlerInterface $commandHandler
 	 * @param \Exception $exception
 	 * @return void
 	 */
-	public function onCommandHandlingFailure(Command $command, CommandHandler $commandHandler, \Exception $exception) {
+	public function onCommandHandlingFailure(Command $command, CommandHandlerInterface $commandHandler, \Exception $exception) {
 		$additionalData = [
 			'status' => 'failure',
 			'handler' => get_class($commandHandler),
